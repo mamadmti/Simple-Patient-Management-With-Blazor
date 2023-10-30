@@ -1,0 +1,199 @@
+﻿@page "/AllPatients"
+@using Sureze.Helpers
+@using Sureze.Domain.Entities
+@using Sureze.Methods
+@inject StateContainer StateContainer
+@inject PatientsClass PatientsClass
+@inject NavigationManager NavManager
+
+<PageTitle>All Patients</PageTitle>
+
+
+
+
+<div id="exampleModalLive" class="modal fade mymodal @show " tabindex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLiveLabel">Delete </h5>
+                <button type="button" @onclick="CloseWarning" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to delete this record ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" @onclick="CloseWarning" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" @onclick="Delete" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+            <th class="cursor-pointer" @onclick="SortbyFirstname">Firstname</th>
+            <th class="cursor-pointer" @onclick="SortbyLastName">Lastname</th>
+            <th class="cursor-pointer" @onclick="SortbyTitle">Title</th>
+            <th class="cursor-pointer" @onclick="SortbyRace">Race</th>
+            <th class="cursor-pointer" @onclick="SortbyPrimaryProvider">PrimaryProvider</th>
+        <th>profilepicture</th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    
+
+    @foreach (var p in AllPatientsList)
+    {
+        <tr>
+            <td >@p.FirstName </td>
+                <td >@p.LastName </td>
+                <td>@p.Title </td>
+                <td >@p.Race </td>
+                <td >@p.PrimaryProvider </td>
+            <td > <img style="width:80px" src="@p.profilepicture" /></td >
+
+                <td>  <div @onclick="() => Edit(p.Id)" class="mt-4  btn btn-outline-primary"> Edit  </div></td>
+                <td>  <div @onclick="() => DeleteWarning(p.Id)" class="mt-4  btn btn-outline-danger"> Delete  </div></td>
+        </tr>
+        
+       
+    }
+
+    </tbody>
+</table>
+
+
+@code
+{
+    string show = "";
+    string CantDeleteshow = "";
+    private List<Patients> AllPatientsList = new List<Patients>();
+    protected override async Task OnInitializedAsync()
+    {
+        
+            AllPatientsList = PatientsClass.GetPatients().Result;
+
+    }
+
+
+
+
+    bool Descending = false;
+
+    private async Task SortbyFirstname ()
+    {
+        if (Descending)
+        {
+            AllPatientsList = AllPatientsList.OrderBy(a => a.FirstName).ToList();
+            Descending = false;
+        }
+        else
+        {
+            AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
+            Descending = true;
+        }
+    } 
+    
+    private async Task SortbyLastName ()
+    {
+        if (Descending)
+        {
+            AllPatientsList = AllPatientsList.OrderBy(a => a.FirstName).ToList();
+            Descending = false;
+        }
+        else
+        {
+            AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
+            Descending = true;
+        }
+    }
+ 
+    private async Task SortbyTitle()
+    {
+        if (Descending)
+        {
+            AllPatientsList = AllPatientsList.OrderBy(a => a.FirstName).ToList();
+            Descending = false;
+        }
+        else
+        {
+            AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
+            Descending = true;
+        }
+    }
+ 
+    private async Task SortbyRace()
+    {
+        if (Descending)
+        {
+            AllPatientsList = AllPatientsList.OrderBy(a => a.FirstName).ToList();
+            Descending = false;
+        }
+        else
+        {
+            AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
+            Descending = true;
+        }
+    }
+ 
+    private async Task SortbyPrimaryProvider()
+    {
+        if (Descending)
+        {
+            AllPatientsList = AllPatientsList.OrderBy(a => a.FirstName).ToList();
+
+        }
+        else
+        {
+            AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
+            Descending = true;
+        }
+    }
+
+    private async Task Edit(long id)
+    {
+       StateContainer.EditPatient =  AllPatientsList.FirstOrDefault(a => a.Id == id);
+        NavManager.NavigateTo("/EditPatient");
+    }
+
+    private long sumbitedtodelete = 0;
+    private async Task DeleteWarning (long id)
+    {
+        show = "show";
+        sumbitedtodelete = id;
+    }   
+    
+    private async Task CloseWarning ()
+    {
+        show = "";
+        CantDeleteshow = "";
+        sumbitedtodelete = 0;
+    }
+
+
+    private async Task Delete()
+    {
+        try
+        {
+            show = "";
+            await PatientsClass.DeletePatient(AllPatientsList.FirstOrDefault(a => a.Id == sumbitedtodelete));
+            AllPatientsList = PatientsClass.GetPatients().Result;
+            StateContainer.StateChange();
+        }
+        catch (Exception e)
+        {
+            
+        }
+        
+       
+    }
+
+
+
+}

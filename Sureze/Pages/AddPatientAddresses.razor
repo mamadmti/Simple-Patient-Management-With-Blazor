@@ -1,0 +1,72 @@
+﻿@page "/AddPatientAddresses"
+@using Sureze.Domain.Entities
+@using Sureze.Domain.Entities.Enums
+@using Sureze.Helpers
+@using System.Net
+@using Sureze.Methods
+@using Sureze.Services
+@inject StateContainer StateContainer
+@inject PatientsClass PatientsClass
+ 
+<h3>Add Patient Addresses</h3>
+
+
+<div class="form-group">
+
+
+
+
+
+
+    <label>address</label>
+    <input type="text" @bind-value="_PatientAddresses.address" @bind-value:event="oninput" class="form-control" placeholder="address">
+
+    <label>country</label>
+    <input type="text" @bind-value="_PatientAddresses.country" @bind-value:event="oninput" class="form-control" placeholder="country">
+
+    <label>phonenumber</label>
+    <input type="text" @bind-value="_PatientAddresses.phonenumber" @bind-value:event="oninput" class="form-control" placeholder="phonenumber">
+
+    <label>postalCode</label>
+    <input type="text" @bind-value="_PatientAddresses.postalCode" @bind-value:event="oninput" class="form-control" placeholder="postalCode">
+
+
+
+
+
+
+
+    <div style="text-align: center">
+
+        <button class="btn btn-primary" @onclick="saveNewPatients" type="submit">Save Initial Info</button>
+
+    </div>
+</div>
+
+
+
+@code {
+    private PatientAddresses _PatientAddresses = new PatientAddresses();
+
+   
+ 
+
+    private async Task saveNewPatients()
+    {
+        
+        _PatientAddresses.CreateAt = DateTime.Now;
+        _PatientAddresses.PatientsId = StateContainer.activeuserid;
+
+        PatientsClass.NewPatientAddresses(_PatientAddresses);
+        _PatientAddresses.address = "";
+        _PatientAddresses.country = "";
+        _PatientAddresses.phonenumber = "";
+        _PatientAddresses.postalCode = "";
+
+
+    }
+
+
+
+
+}

@@ -1,0 +1,46 @@
+﻿@page "/"
+@using Sureze.Domain.Entities
+@using Sureze.Helpers
+@inject StateContainer StateContainer
+
+<PageTitle>Index</PageTitle>
+
+
+<ul class="nav nav-pills">
+    
+    <li class="nav-item ">
+        <a class="nav-link disabled @(StateContainer.Patients?"active":"")" @onclick="StateContainer.UpdateHeading" href="#">Add Patients</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link disabled @(StateContainer.PatientAddresses?"active":"") " @onclick="StateContainer.UpdateHeading" href="#">Add PatientAddresses</a>
+    </li>
+
+</ul>
+
+
+
+@if (StateContainer.Patients)
+{
+    <AddPatients > </AddPatients> 
+}
+else
+{
+   <AddPatientAddresses></AddPatientAddresses>
+}
+
+
+@code
+{
+    // // private bool ShowPatientAddresses = false;
+    // private bool Patients = true;
+    // private bool PatientAddresses = false;
+
+    // private void UpdateHeading()
+    // {
+        
+    //         Patients = !Patients;
+    //         PatientAddresses = !PatientAddresses;
+        
+        
+    // }
+}

@@ -1,0 +1,290 @@
+﻿@page "/EditPatient"
+@using Sureze.Domain.Entities
+@using Sureze.Domain.Entities.Enums
+@using Sureze.Helpers
+@using System.Net
+@using Sureze.Methods
+@using Sureze.Services
+@inject PatientsClass PatientsClass
+@inject StateContainer StateContainer
+<h3>EditPatient</h3>
+
+
+
+<div class="form-group">
+        
+    
+  
+
+    <label >Title</label>
+   
+    <label>TitleList : @SelectedTitle </label>
+    <select class="form-select" @bind="SelectedTitle" aria-label=".form-select-sm example">
+       
+        
+        @foreach (string item in TitleList )
+       {
+
+           <option value="@TitleList.IndexOf(item)" > @item </option>
+          
+ 
+       }
+       
+    </select>
+    
+
+
+    <label>PrimaryProviderList : @SelectedPrimaryProvider </label>
+    <select class="form-select" @bind="SelectedPrimaryProvider" aria-label=".form-select-sm example">
+       
+        
+        @foreach (string item in PrimaryProviderList )
+        {
+
+            <option value="@PrimaryProviderList.IndexOf(item)" > @item </option>
+          
+ 
+        }
+       
+    </select>
+    
+    <label >Suffix</label>
+    <input type="text" @bind-value="_patients.Suffix" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
+
+    <label >FirstName</label>
+    <input type="text" @bind-value="_patients.FirstName" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
+    
+    <label >LastName</label>
+    <input type="text" @bind-value="_patients.LastName" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
+    
+    <label >NatinalIdNumber</label>
+    <input type="text" @bind-value="_patients.NatinalIdNumber" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
+   
+    <label >Birthdate</label>
+    <input type="datetime" @bind-value="_patients.Birthdate" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
+    
+    
+    
+    <label>SexList : @SelectedSex </label>
+    <select class="form-select" @bind="SelectedSex" aria-label=".form-select-sm example">
+       
+        
+        @foreach (string item in SexList )
+        {
+
+            <option value="@SexList.IndexOf(item)" > @item </option>
+          
+ 
+        }
+       
+    </select>
+    
+    
+
+    
+    <label>RaceList : @SelectedRace </label>
+    <select class="form-select" @bind="SelectedRace" aria-label=".form-select-sm example">
+       
+        
+        @foreach (string item in RaceList )
+        {
+
+            <option value="@RaceList.IndexOf(item)" > @item </option>
+          
+ 
+        }
+       
+    </select>
+    
+    <InputFile OnChange="@LoadFiles" class="form-control" multiple accept=".png,.jpg,.jpeg" />
+
+    <div style="text-align: center;"> 
+        <img style="width: 225px;margin: 32px;border-radius: 30px;" src="@_patients.profilepicture" />
+    </div>
+
+    @if (errors.Count > 0)
+    {
+        <h2>Errors</h2>
+        <ul class="text-danger">
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    }
+  
+    <div style="text-align: center">
+        
+        <button class="btn btn-primary" @onclick="UpdatePatients" type="submit">Save Initial Info</button>
+
+    </div>
+    
+
+    <hr>
+    <h5> Addresses </h5>
+    @foreach (var x in PatientAddresses)
+    {
+        <label>address</label>
+        <input type="text" @bind-value="x.address" @bind-value:event="oninput"  class="form-control" placeholder="address">
+
+        <label>country</label>
+        <input type="text" @bind-value="x.country" @bind-value:event="oninput" class="form-control" placeholder="country">
+
+        <label>phonenumber</label>
+        <input type="text" @bind-value="x.phonenumber" @bind-value:event="oninput" class="form-control" placeholder="phonenumber">
+
+        <label>postalCode</label>
+        <input type="text" @bind-value="x.postalCode" @bind-value:event="oninput" class="form-control" placeholder="postalCode">
+
+
+
+
+
+
+
+        <div style="text-align: center">
+
+            <button class="btn btn-primary" @onclick="() => UpdateAddressList(x.Id)" type="submit">Save Address Info</button>
+
+        </div>
+
+        <hr>
+    }
+    
+
+</div>
+
+
+
+@code {
+    private Patients _patients = new Patients();
+    private List<string> TitleList = new List<string>();
+    private List<string> PrimaryProviderList = new List<string>();
+    private List<string> SexList = new List<string>();
+    private List<string> RaceList = new List<string>();
+
+    private int SelectedTitle = 0;
+    private int SelectedPrimaryProvider = 0;
+    private int SelectedSex =0;
+    private int SelectedRace = 0;
+
+    private int i;
+
+
+
+
+    public List<string> TitleEnums()
+    {
+        return Enum.GetNames(typeof(PatientsEnums.Title)).ToList();
+    } 
+
+    public List<string> PrimaryProvider()
+    {
+        return Enum.GetNames(typeof(PatientsEnums.PrimaryProvider)).ToList();
+    } 
+
+    public List<string> Sex()
+    {
+        return Enum.GetNames(typeof(PatientsEnums.Sex)).ToList();
+    }
+    public List<string> Race()
+    {
+        return Enum.GetNames(typeof(PatientsEnums.Race)).ToList();
+    }
+
+
+    List<PatientAddresses> PatientAddresses = new List<PatientAddresses>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        TitleList = TitleEnums();
+        PrimaryProviderList = PrimaryProvider();
+        SexList = Sex();
+        RaceList = Race();
+        _patients = StateContainer.EditPatient;
+        SelectedTitle = (int) StateContainer.EditPatient.Title;
+        SelectedPrimaryProvider = (int)StateContainer.EditPatient.PrimaryProvider;
+        SelectedSex = (int)StateContainer.EditPatient.Sex;
+        SelectedRace = (int)StateContainer.EditPatient.Race;
+
+        PatientAddresses = PatientsClass.GetPatientAddresses(StateContainer.EditPatient.Id).Result;
+    }
+
+
+
+
+
+    private long maxFileSize = 1024 * 1024 * 1; // represents 3MB
+    private int maxAllowedFiles = 1;
+    private List<string> errors = new();
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        errors.Clear();
+
+        if (e.FileCount > maxAllowedFiles)
+        {
+            errors.Add($"Error: Attempting to upload {e.FileCount} files, but only {maxAllowedFiles} files are allowed");
+            return;
+        }
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            try
+            {
+                string newFileName = Path.ChangeExtension(
+                    Path.GetRandomFileName(), 
+                    Path.GetExtension(file.Name));
+
+                // string path = Path.Combine(
+                //     config.GetValue<string>("FileStorage")!, 
+                //     "tcorey", 
+                //     newFileName);
+
+
+                var ext = System.IO.Path.GetExtension(file.Name);
+                string FileName = Guid.NewGuid().ToString() + ext;
+                var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/",FileName);
+
+
+
+
+                // Directory.CreateDirectory(Path.Combine(
+                //     config.GetValue<string>("FileStorage")!,
+                //     "tcorey"));
+
+                await using FileStream fs = new(imagePath, FileMode.Create);
+                await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+                _patients.profilepicture = "images/"+ FileName ;
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"File: {file.Name} Error: {ex.Message}");
+            }
+        }
+    }
+
+
+
+
+    private async Task UpdatePatients ()
+    {
+        _patients.Title = (PatientsEnums.Title)SelectedTitle ;
+        _patients.PrimaryProvider = (PatientsEnums.PrimaryProvider)SelectedPrimaryProvider ;
+        _patients.Race = (PatientsEnums.Race)SelectedRace ;
+        _patients.Sex = (PatientsEnums.Sex)SelectedSex ;
+        _patients.CreateAt = DateTime.Now;
+        var res = PatientsClass.UpdatePatient(_patients);
+        
+    }
+
+
+    public void UpdateAddressList(long id)
+    {
+        var x = PatientAddresses.FirstOrDefault(a => a.Id == id);
+        var res = PatientsClass.UpdatePatientAddresses(x);
+    }
+
+}
