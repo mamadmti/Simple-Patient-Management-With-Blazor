@@ -6,7 +6,7 @@
 <PageTitle>Index</PageTitle>
 
 
-<ul class="nav nav-pills">
+@* <ul class="nav nav-pills">
     
     <li class="nav-item ">
         <a class="nav-link disabled @(StateContainer.Patients?"active":"")" @onclick="StateContainer.UpdateHeading" href="#">Add Patients</a>
@@ -16,18 +16,18 @@
     </li>
 
 </ul>
+ *@
 
 
-
-@if (StateContainer.Patients)
-{
-    <AddPatients > </AddPatients> 
-}
+@* @if (StateContainer.Patients)
+{ *@
+    <AllPatients > </AllPatients> 
+@* }
 else
 {
    <AddPatientAddresses></AddPatientAddresses>
 }
-
+ *@
 
 @code
 {

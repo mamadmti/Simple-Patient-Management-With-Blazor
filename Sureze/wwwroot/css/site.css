@@ -140,6 +140,6 @@ input:checked + .slider:before {
 
 .show {
     padding-right: 17px;
-    display: block;
+    display: block !important;
     background-color: #000000bf;
 }

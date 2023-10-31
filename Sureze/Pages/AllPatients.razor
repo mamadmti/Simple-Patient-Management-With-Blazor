@@ -8,6 +8,9 @@
 
 <PageTitle>All Patients</PageTitle>
 
+<div class="top-row ">
+    <h3>All Patients</h3>
+</div>
 
 
 
@@ -31,7 +34,10 @@
     </div>
 </div>
 
-
+<div class="w-50">
+  
+    <input type="text" class="form-control mb-3" @oninput="(EventArgs) => {Search(EventArgs.Value.ToString());}"placeholder="Search">
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -41,7 +47,9 @@
             <th class="cursor-pointer" @onclick="SortbyTitle">Title</th>
             <th class="cursor-pointer" @onclick="SortbyRace">Race</th>
             <th class="cursor-pointer" @onclick="SortbyPrimaryProvider">PrimaryProvider</th>
-        <th>profilepicture</th>
+            <th>profilepicture</th>
+            <th class="cursor-pointer" @onclick="SortbyPrimaryProvider">Edit</th>
+            <th class="cursor-pointer" @onclick="SortbyPrimaryProvider">Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -74,11 +82,12 @@
     string show = "";
     string CantDeleteshow = "";
     private List<Patients> AllPatientsList = new List<Patients>();
+    private List<Patients> MainAllPatientsList = new List<Patients>();
     protected override async Task OnInitializedAsync()
     {
         
-            AllPatientsList = PatientsClass.GetPatients().Result;
-
+        AllPatientsList = PatientsClass.GetPatients().Result;
+        MainAllPatientsList = AllPatientsList;
     }
 
 
@@ -153,6 +162,18 @@
         {
             AllPatientsList = AllPatientsList.OrderByDescending(a => a.FirstName).ToList();
             Descending = true;
+        }
+    }
+
+
+
+    private void Search(string? search )
+    {
+        AllPatientsList = MainAllPatientsList;
+        AllPatientsList = AllPatientsList.Where(a => a.Title.ToString().ToLower().Contains(search.ToLower()) || a.Birthdate.ToString().ToLower().Contains(search.ToLower()) || a.FirstName.ToLower().Contains(search.ToLower()) || a.LastName.ToLower().Contains(search.ToLower()) || a.NatinalIdNumber.ToLower().Contains(search.ToLower()) || a.PrimaryProvider.ToString().ToLower().Contains(search.ToLower()) || a.Race.ToString().ToLower().Contains(search.ToLower()) || a.Sex.ToString().ToLower().Contains(search.ToLower()) || a.Suffix.ToLower().Contains(search.ToLower())).ToList();
+        if (search == "")
+        {
+            AllPatientsList = MainAllPatientsList;
         }
     }
 

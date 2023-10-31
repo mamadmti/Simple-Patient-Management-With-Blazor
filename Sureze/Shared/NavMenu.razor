@@ -10,16 +10,18 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="AddPatient" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Register New
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
             <NavLink class="nav-link" href="AllPatients">
-                <span class="oi oi-plus" aria-hidden="true"></span> All Patients
+                <span class="oi oi-home" aria-hidden="true"></span> All Patients
             </NavLink>
         </div>
-       
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="AddPatient" Match="NavLinkMatch.All">
+                <span class="oi oi-plus" aria-hidden="true"></span> Register New
+            </NavLink>
+        </div>
+
+
     </nav>
 </div>
 
