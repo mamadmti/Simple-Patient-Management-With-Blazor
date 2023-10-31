@@ -261,3 +261,4 @@ TodoApp/Logs/*
 
 # Use abp install-libs to restore.
 **/wwwroot/libs/*
+/Sureze/wwwroot/images

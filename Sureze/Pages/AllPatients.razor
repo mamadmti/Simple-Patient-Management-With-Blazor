@@ -28,7 +28,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" @onclick="CloseWarning" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" @onclick="Delete" class="btn btn-primary">Save changes</button>
+                <button type="button" @onclick="Delete" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
 
 <div class="w-50">
   
-    <input type="text" class="form-control mb-3" @oninput="(EventArgs) => {Search(EventArgs.Value.ToString());}"placeholder="Search">
+    <input type="text" class="form-control mb-3" @oninput="(EventArgs) => {Search(EventArgs.Value.ToString());}" placeholder="Search">
 </div>
 
 <table class="table table-striped">

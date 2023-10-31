@@ -64,6 +64,19 @@ namespace Sureze.Methods
 
             return x.ToList();
         }
+        
+        public async Task<bool> UnityCheckForNatinalIdNumber(string NatinalIdNumber)
+        {
+      
+            var x = await _services.PatientsService.ReadAll(new PatientSpecifications(NatinalIdNumber));
+
+            //in case it exists in other user
+            if (x.Any())
+            {
+                return false;
+            }
+            return true;
+        }
 
 
         public async Task<List<PatientAddresses>> GetPatientAddresses(long id)

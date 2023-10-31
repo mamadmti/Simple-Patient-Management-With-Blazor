@@ -3,11 +3,11 @@ using Sureze.Repositories;
 
 namespace Sureze.Specifications
 {
-    public class PatientAddressesSpecifications : BaseSpecifcation<PatientAddresses>
+    public class PatientSpecifications : BaseSpecifcation<Patients>
     {
-        public PatientAddressesSpecifications(long PatientsId)
+        public PatientSpecifications(string NatinalIdNumber)
         {
-            Criteria = i => i.PatientsId == PatientsId;
+            Criteria = i => i.NatinalIdNumber == NatinalIdNumber;
 
         }
     }

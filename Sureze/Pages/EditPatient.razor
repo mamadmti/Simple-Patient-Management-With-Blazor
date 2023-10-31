@@ -8,6 +8,7 @@
 @inject PatientsClass PatientsClass
 @inject StateContainer StateContainer
 
+
 <div class="top-row ">
    <h3>EditPatient</h3>
 </div>
@@ -22,10 +23,10 @@
         </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Title</label>
    
-        <label>TitleList : @SelectedTitle </label>
+        <label>TitleList  </label>
         <select class="form-select" @bind="SelectedTitle" aria-label=".form-select-sm example">
        
         
@@ -41,8 +42,8 @@
     
     </div>
 
-    <div class="col-6">
-        <label>PrimaryProviderList : @SelectedPrimaryProvider </label>
+    <div class="col-6 pt-2">
+        <label>PrimaryProviderList  </label>
         <select class="form-select" @bind="SelectedPrimaryProvider" aria-label=".form-select-sm example">
        
         
@@ -57,34 +58,34 @@
         </select>
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Suffix</label>
         <input type="text" @bind-value="_patients.Suffix" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >FirstName</label>
         <input type="text" @bind-value="_patients.FirstName" @bind-value:event="oninput" class="form-control" placeholder="FirstName">
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >LastName</label>
         <input type="text" @bind-value="_patients.LastName" @bind-value:event="oninput" class="form-control" placeholder="LastName">
     </div>
     
-    <div class="col-6">
-        <label >NatinalIdNumber</label>
-        <input type="text" @bind-value="_patients.NatinalIdNumber" @bind-value:event="oninput" class="form-control" placeholder="NatinalIdNumber">
+    <div class="col-6 pt-2">
+        <label>National Id </label>
+        <input type="text" @bind-value="_patients.NatinalIdNumber" class="form-control  " placeholder="National Id">
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Birthdate</label>
         <input type="datetime" @bind-value="_patients.Birthdate" @bind-value:event="oninput" class="form-control" placeholder="Birthdate">
     </div>
 
 
-    <div class="col-6">
-        <label>SexList : @SelectedSex </label>
+    <div class="col-6 pt-2">
+        <label>SexList  </label>
         <select class="form-select" @bind="SelectedSex" aria-label=".form-select-sm example">
        
         
@@ -101,8 +102,8 @@
 
     
 
-    <div class="col-6">
-        <label>RaceList : @SelectedRace </label>
+    <div class="col-6 pt-2">
+        <label>RaceList   </label>
         <select class="form-select" @bind="SelectedRace" aria-label=".form-select-sm example">
        
         
@@ -116,14 +117,14 @@
        
         </select>
     </div>
-    <div class="col-6">
-        <label>Profile picture :  </label>
+    <div class="col-6 pt-2">
+        <label>Profile picture   </label>
         <InputFile OnChange="@LoadFiles" class="form-control" multiple accept=".png,.jpg,.jpeg"/>
-        @* 
-        <div style="text-align: center;"> 
-            <img style="width: 225px;margin: 32px;border-radius: 30px;" src="@_patients.profilepicture" />
-        </div> *@
 
+    </div>
+    
+    <div class="col-6 pt-2">
+        
         @if (errors.Count > 0)
         {
             <h2>Errors</h2>
@@ -134,6 +135,7 @@
                 }
             </ul>
         }
+
     </div>
 
     <div style="text-align: center" class="p-3">
@@ -151,22 +153,22 @@
     </div>
     @foreach (var x in PatientAddresses)
     {
-        <div class="col-6">
+        <div class="col-6 pt-2">
             <label>address</label>
             <input type="text" @bind-value="x.address" @bind-value:event="oninput"  class="form-control" placeholder="address">
         </div>
 
-        <div class="col-6">
+        <div class="col-6 pt-2">
             <label>country</label>
             <input type="text" @bind-value="x.country" @bind-value:event="oninput" class="form-control" placeholder="country">
         </div>
 
-        <div class="col-6">
+        <div class="col-6 pt-2">
             <label>phonenumber</label>
             <input type="text" @bind-value="x.phonenumber" @bind-value:event="oninput" class="form-control" placeholder="phonenumber">
         </div>
 
-        <div class="col-6">
+        <div class="col-6 pt-2">
         <label>postalCode</label>
         <input type="text" @bind-value="x.postalCode" @bind-value:event="oninput" class="form-control" placeholder="postalCode">
         </div>
@@ -228,6 +230,7 @@
 
 
     List<PatientAddresses> PatientAddresses = new List<PatientAddresses>();
+    string LastNatinalIdNumber = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -242,6 +245,8 @@
         SelectedRace = (int)StateContainer.EditPatient.Race;
 
         PatientAddresses = PatientsClass.GetPatientAddresses(StateContainer.EditPatient.Id).Result;
+
+        LastNatinalIdNumber = _patients.NatinalIdNumber;
     }
 
 
@@ -305,13 +310,20 @@
 
     private async Task UpdatePatients ()
     {
+        errors.Clear();
+        errorcheck();
+
+        if (errors.Any())
+        {
+            return;
+        }
         _patients.Title = (PatientsEnums.Title)SelectedTitle ;
         _patients.PrimaryProvider = (PatientsEnums.PrimaryProvider)SelectedPrimaryProvider ;
         _patients.Race = (PatientsEnums.Race)SelectedRace ;
         _patients.Sex = (PatientsEnums.Sex)SelectedSex ;
         _patients.CreateAt = DateTime.Now;
         var res = PatientsClass.UpdatePatient(_patients);
-        
+
     }
 
 
@@ -319,6 +331,57 @@
     {
         var x = PatientAddresses.FirstOrDefault(a => a.Id == id);
         var res = PatientsClass.UpdatePatientAddresses(x);
+    }
+
+
+    private void errorcheck()
+    {
+        if (_patients.Birthdate < new DateTime(1900, 1, 1))
+        {
+            errors.Add("Cant Save Birthday Before 1900 ");
+        }
+        if (_patients.FirstName.Length < 2)
+        {
+            errors.Add("your FirstName should be more than 2 characters ");
+        }
+        if (_patients.LastName.Length < 2)
+        {
+            errors.Add("your LastName should be more than 2 characters ");
+        }
+        if (_patients.profilepicture.Length == 0)
+        {
+            errors.Add("Please upload a profile picture");
+        }
+        if (_patients.Suffix.Length < 2)
+        {
+            errors.Add("your suffix should be more than 2 characters ");
+        }
+        if (_patients.NatinalIdNumber.Length == 0)
+        {
+            errors.Add("your National id number should not be empty ");
+           
+        }
+        SearchforUnity(_patients.NatinalIdNumber);
+    }
+
+
+    private bool NationalIdIsValid = true;
+    private async void SearchforUnity(string NatinalIdNumber)
+    {
+        // just in case it is changed
+        if (_patients.NatinalIdNumber != LastNatinalIdNumber)
+        {
+            var x = PatientsClass.UnityCheckForNatinalIdNumber(NatinalIdNumber);
+            if (x.Result == false)
+            {
+                errors.Add("Your National Id Must be unique .");
+                _patients.NatinalIdNumber = LastNatinalIdNumber;
+            }
+           
+            
+            NationalIdIsValid = x.Result;
+            
+        }
     }
 
 }

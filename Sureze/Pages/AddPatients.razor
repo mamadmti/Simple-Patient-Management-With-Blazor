@@ -15,7 +15,7 @@
 
 <div class=" row ">
         
-    <div class="col-12">
+    <div class="col-12 pt-2">
 
         <div style="text-align: center;">
             <img style="width: 200px;margin: 32px;border-radius: 30px;margin: 0;" src="@_patients.profilepicture" />
@@ -24,10 +24,10 @@
 
     </div>
   
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Title</label>
    
-    <label>TitleList : @SelectedTitle </label>
+    <label>TitleList  </label>
     <select class="form-select" @bind="SelectedTitle" aria-label=".form-select-sm example">
        
         
@@ -42,8 +42,8 @@
     </select>
     </div>
 
-    <div class="col-6">
-        <label>PrimaryProviderList : @SelectedPrimaryProvider </label>
+    <div class="col-6 pt-2">
+        <label>PrimaryProviderList  </label>
         <select class="form-select" @bind="SelectedPrimaryProvider" aria-label=".form-select-sm example">
        
         
@@ -57,34 +57,36 @@
        
         </select>
     </div>
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Suffix</label>
         <input type="text" @bind-value="_patients.Suffix" @bind-value:event="oninput" class="form-control"  placeholder="Suffix">
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >FirstName</label>
         <input type="text" @bind-value="_patients.FirstName" @bind-value:event="oninput" class="form-control" placeholder="FirstName">
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >LastName</label>
         <input type="text" @bind-value="_patients.LastName" @bind-value:event="oninput" class="form-control" placeholder="LastName">
     </div>
     
-    <div class="col-6">
-        <label >NatinalIdNumber</label>
-        <input type="text" @bind-value="_patients.NatinalIdNumber" @bind-value:event="oninput" class="form-control" placeholder="NatinalIdNumber">
+    <div class="col-6 pt-2">
+        <label>National Id </label>
+        <input type="number" @onchange="(EventArgs) => {SearchforUnity(EventArgs.Value.ToString());}" class="form-control @(NationalIdIsValid?"":"is-invalid") " placeholder="National Id">
+        
+        
     </div>
     
-    <div class="col-6">
+    <div class="col-6 pt-2">
         <label >Birthdate</label>
-        <input type="datetime" @bind-value="_patients.Birthdate" @bind-value:event="oninput" class="form-control" placeholder="Birthdate">
+        <input type="date" @bind-value="_patients.Birthdate" @bind-value:event="oninput" class="form-control" placeholder="Birthdate" >
     </div>
 
     
-    <div class="col-6">
-        <label>SexList : @SelectedSex </label>
+    <div class="col-6 pt-2">
+        <label>SexList </label>
         <select class="form-select" @bind="SelectedSex" aria-label=".form-select-sm example">
        
         
@@ -101,8 +103,8 @@
 
     
 
-    <div class="col-6">
-        <label>RaceList : @SelectedRace </label>
+    <div class="col-6 pt-2">
+        <label>RaceList </label>
         <select class="form-select" @bind="SelectedRace" aria-label=".form-select-sm example">
        
         
@@ -116,14 +118,19 @@
        
         </select>
     </div>
-    <div class="col-6">
-        <label>Profile picture :  </label>
+    <div class="col-6 pt-2">
+        <label>Profile picture </label>
         <InputFile OnChange="@LoadFiles" class="form-control" multiple accept=".png,.jpg,.jpeg"/>
-@* 
+        @* 
         <div style="text-align: center;">
             <img style="width: 225px; margin: 32px; border-radius: 30px;" src="@_patients.profilepicture"/>
         </div> *@
 
+
+    </div>
+    
+    <div class="col-6 pt-2">
+        
         @if (errors.Count > 0)
         {
             <h2>Errors</h2>
@@ -134,6 +141,7 @@
                 }
             </ul>
         }
+
     </div>
 
     <div style="text-align: center" class="p-3">
@@ -147,6 +155,7 @@
 
 @code {
     private Patients _patients = new Patients();
+    
     private List<string> TitleList = new List<string>();
     private List<string> PrimaryProviderList = new List<string>();
     private List<string> SexList = new List<string>();
@@ -156,6 +165,7 @@
     private int SelectedPrimaryProvider = 0;
     private int SelectedSex =0;
     private int SelectedRace = 0;
+    
 
     private int i;
 
@@ -248,11 +258,44 @@
         }
     }
 
-
+    private void errorcheck()
+    {
+        if (_patients.Birthdate < new DateTime(1900, 1, 1))
+        {
+            errors.Add("Cant Save Birthday Before 1900 ");
+        }
+        if (_patients.FirstName.Length < 2)
+        {
+            errors.Add("your FirstName should be more than 2 characters ");
+        }
+        if (_patients.LastName.Length < 2)
+        {
+            errors.Add("your LastName should be more than 2 characters ");
+        }
+        if (_patients.profilepicture.Length == 0)
+        {
+            errors.Add("Please upload a profile picture");
+        }
+        if (_patients.Suffix.Length < 2)
+        {
+            errors.Add("your suffix should be more than 2 characters ");
+        }
+        if (_patients.NatinalIdNumber.Length == 0)
+        {
+            errors.Add("your National id number should not be empty ");
+        }
+    }
 
 
     private async Task saveNewPatients ()
-    {
+    { 
+        errors.Clear();
+        errorcheck();
+            
+        if (errors.Any())
+        {
+            return;
+        }
         _patients.Title = (PatientsEnums.Title)SelectedTitle ;
         _patients.PrimaryProvider = (PatientsEnums.PrimaryProvider)SelectedPrimaryProvider ;
         _patients.Race = (PatientsEnums.Race)SelectedRace ;
@@ -265,7 +308,21 @@
         NavManager.NavigateTo("/AddPatientAddresses");
     }
 
+    private bool NationalIdIsValid = true;
+    private async void SearchforUnity(string NatinalIdNumber)
+    {
+        _patients.NatinalIdNumber = NatinalIdNumber;
+        var x = PatientsClass.UnityCheckForNatinalIdNumber(NatinalIdNumber);
+        if (x.Result == false)
+        {
+            errors.Add("Your National Id Must be unique .");
+        }
+        NationalIdIsValid = x.Result;
 
+    }
+
+
+    string errorstring = "";
 
 
 }
